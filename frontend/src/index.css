@@ -1,0 +1,88 @@
+/* Design tokens: Shiny-style palette (defi-dapp-builder skill) on a
+   Synthra-like layout — pure-black ink sections, paper sections, violet accent. */
+:root {
+  --color-bg: #07060a;
+  --color-ink: #07060a;
+  --color-surface: #16121f;
+  --color-surface-hover: #1d1829;
+  --color-border: #2a2438;
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #f4f2f7;
+  --color-text-secondary: #a79db5;
+  --color-text-muted: #6f6779;
+  --color-accent: #9b5de5;
+  --color-accent-hover: #b57dee;
+  --color-blue: #3f91ff;
+  --color-safe: #4fd1c5;
+  --color-warning: #e8b54c;
+  --color-danger: #e5484d;
+
+  --paper: #efedf2;
+  --paper-text: #121116;
+  --paper-muted: #6c6673;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter Tight', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  --radius-lg: 28px;
+  --radius-md: 22px;
+  --gutter: clamp(16px, 2vw, 24px);
+  --page-max: 1440px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
