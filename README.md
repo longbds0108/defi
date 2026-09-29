@@ -25,7 +25,22 @@ Sitemap: Landing → **Launch app** → Connect (Google via Privy, or wallet) �
 
 - Locally the app lives at `http://localhost:5173/app`. In production the same build serves the app when the hostname starts with `app.` — point both `<domain>` and `app.<domain>` at the Vercel project and set `VITE_APP_URL` / `VITE_SITE_URL`.
 - Auth: copy `frontend/.env.example` to `frontend/.env.local` and set `VITE_PRIVY_APP_ID` to enable Google sign-in. Without it, "Connect wallet" still works with browser wallets.
-- Data: swap quotes, prices, pools, launches and history are **demo data** (`frontend/src/dapp/data/demo.ts`) and every screen shows a "Demo data" badge. The native USDC balance on Arc Testnet in Portfolio → Tokens is read on-chain. Submitting a flow shows a toast; no transaction is sent until contracts exist.
+- Networks: Ethereum Sepolia, Base Sepolia, Unichain Sepolia and Arc Testnet (switch in the header). Token addresses in `frontend/src/dapp/chains.ts` were verified on-chain.
+
+### Uniswap integration (per developers.uniswap.org)
+
+| Feature | Source | Needs `UNISWAP_API_KEY` |
+|---|---|---|
+| Swap | Trading API: `check_approval` → `quote` → Permit2 signature → `swap` (or `order` for UniswapX) | yes |
+| Bridge | Trading API cross-chain quote; `BRIDGE` → `swap`, `CHAINED` → `plan` step loop | yes |
+| Create position | LP API: `pool_info` → `check_approval` (+ v4 batch permit) → `lp/create` | yes |
+| Launches | Liquidity Launchpad CCA contracts, read on-chain (`AuctionCreated` logs), bid / exit / claim | no |
+| Launch auction | UERC20 token factory (Sepolia, Arc) / USUPERC20 (Base Sepolia) → CCA factory `create` → fund → `onTokensReceived` | no |
+| Portfolio | On-chain balances on all four networks; activity = transactions sent from this app | no |
+
+- The API key stays **server-side**: the app calls `/api/uniswap/*`, served by the Vite dev proxy (`vite.config.ts`) locally and by `frontend/api/uniswap.ts` on Vercel. Put `UNISWAP_API_KEY=...` in `frontend/.env.local` (dev) and in the Vercel project env (prod).
+- Without a key, or on Arc Testnet (not served by the Uniswap API), Swap/Bridge/Pool fall back to clearly labelled demo quotes.
+- Still demo: Buy/Sell (fiat on/off-ramp is not part of Uniswap's APIs), Explore market data, and the liquidity-positions list (needs an indexer).
 
 ## Stack
 

@@ -1577,6 +1577,7 @@
 
 .positions-strip {
   display: flex;
+  align-items: center;
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 2px;
@@ -1985,8 +1986,12 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.mini-list li > span:not(.pair-mark) {
+.mini-list li > span:not(.pair-mark):not(.network-dot):not(.row-actions) {
   flex: 1;
+}
+
+.mini-list .network-dot {
+  flex: 0 0 auto;
 }
 
 .mini-list strong {
@@ -2153,4 +2158,330 @@
 
 .connect-btn:hover {
   transform: translateY(-1px);
+}
+
+/* ---------- Multichain + live integration ---------- */
+
+.chain-select {
+  position: relative;
+}
+
+button.chain-chip {
+  gap: 8px;
+  padding: 0 10px 0 8px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+button.chain-chip .network-dot {
+  border-radius: 6px;
+}
+
+.chain-chip--warn {
+  border-color: rgba(232, 181, 76, 0.55);
+  background: rgba(232, 181, 76, 0.1);
+}
+
+.chain-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 5;
+  display: grid;
+  width: 290px;
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: rgba(20, 16, 28, 0.98);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.chain-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.chain-menu > button:hover,
+.chain-menu > button.is-active {
+  background: rgba(155, 93, 229, 0.12);
+}
+
+.chain-menu strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.chain-menu small {
+  color: var(--color-text-secondary);
+  font-size: 0.74rem;
+}
+
+.chain-menu__warn {
+  margin-bottom: 4px;
+  border: 1px solid rgba(232, 181, 76, 0.34);
+  background: rgba(232, 181, 76, 0.08) !important;
+  color: #e8cf94;
+  font-size: 0.8rem;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(79, 209, 197, 0.35);
+  border-radius: 999px;
+  background: rgba(79, 209, 197, 0.08);
+  color: #8fe3da;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.live-badge i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-safe);
+  box-shadow: 0 0 8px var(--color-safe);
+}
+
+.demo-badge {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inline-error,
+.inline-warn {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.inline-error {
+  border: 1px solid rgba(229, 72, 77, 0.35);
+  background: rgba(229, 72, 77, 0.08);
+  color: #f19a9d;
+}
+
+.inline-warn {
+  border: 1px solid rgba(232, 181, 76, 0.3);
+  background: rgba(232, 181, 76, 0.06);
+  color: #e8cf94;
+}
+
+.quote dd.route {
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Multi-step flow */
+
+.flow {
+  display: grid;
+  gap: 8px;
+}
+
+.flow__steps {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+.flow-step {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+}
+
+.flow-step__icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  font-size: 0.72rem;
+}
+
+.flow-step__label small {
+  display: block;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.flow-step a {
+  color: var(--color-accent-hover);
+  font-size: 0.78rem;
+}
+
+.flow-step--active {
+  color: var(--color-text-primary);
+  background: rgba(155, 93, 229, 0.1);
+}
+
+.flow-step--active .flow-step__icon {
+  border-color: var(--color-accent);
+  border-top-color: transparent;
+  animation: spin-step 0.9s linear infinite;
+}
+
+@keyframes spin-step {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.flow-step--done {
+  color: var(--color-text-primary);
+}
+
+.flow-step--done .flow-step__icon {
+  border-color: rgba(79, 209, 197, 0.5);
+  background: rgba(79, 209, 197, 0.14);
+  color: var(--color-safe);
+}
+
+.flow-step--error .flow-step__icon {
+  border-color: rgba(229, 72, 77, 0.5);
+  color: var(--color-danger);
+}
+
+.flow-step--skipped {
+  opacity: 0.55;
+}
+
+.flow__error {
+  color: #f19a9d;
+  font-size: 0.82rem;
+}
+
+/* Pool */
+
+.pair-select .segmented {
+  margin-left: auto;
+}
+
+.pool-status {
+  padding: 10px 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.pool-status.is-found {
+  border-style: solid;
+  border-color: rgba(79, 209, 197, 0.35);
+  color: #8fe3da;
+}
+
+.initial-price {
+  display: grid;
+  gap: 6px;
+}
+
+.initial-price span {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.initial-price input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: rgba(7, 6, 10, 0.5);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+/* Launches */
+
+.add-auction {
+  display: flex;
+  gap: 8px;
+}
+
+.launch-card--skeleton {
+  min-height: 340px;
+  background: linear-gradient(90deg, #1a1522, #251d31, #1a1522);
+  background-size: 200% 100%;
+  animation: skeleton-move 1.2s linear infinite;
+}
+
+@keyframes skeleton-move {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.launch-card a:hover {
+  color: var(--color-accent-hover);
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 56px 20px;
+  border: 1px dashed var(--color-border);
+  border-radius: 20px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.empty-state--inline {
+  margin: 16px;
+}
+
+.my-bids {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.row-actions {
+  display: flex;
+  flex: 0 0 auto !important;
+  gap: 6px;
+}
+
+.row-action:disabled {
+  opacity: 0.5;
+}
+
+@media (max-width: 680px) {
+  .add-auction {
+    width: 100%;
+  }
+
+  .pair-select {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-step--active .flow-step__icon,
+  .launch-card--skeleton {
+    animation: none;
+  }
 }

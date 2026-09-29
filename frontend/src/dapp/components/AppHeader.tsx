@@ -4,7 +4,9 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BRAND } from '../../config/site';
 import { LogoMark } from '../../components/Icons';
 import { useAuth } from '../auth/AuthProvider';
-import { arcTestnet } from '../chains';
+import { explorerAddress } from '../chains';
+import { useChain } from '../state/chain';
+import { ChainSelect } from './chainUi';
 import { shortAddress } from '../lib/format';
 import { appPath, useToast } from './ui';
 
@@ -103,6 +105,7 @@ function NavGroup({ group }: { group: (typeof NAV)[number] }) {
 
 function AccountMenu() {
   const { address, email, method, logout } = useAuth();
+  const { config } = useChain();
   const toast = useToast();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -138,8 +141,8 @@ function AccountMenu() {
             >
               Copy address
             </button>
-            <a href={`${arcTestnet.blockExplorers.default.url}/address/${address}`} target="_blank" rel="noreferrer">
-              View on {arcTestnet.blockExplorers.default.name} ↗
+            <a href={explorerAddress(config.chain.id, address ?? '')} target="_blank" rel="noreferrer">
+              View on {config.chain.blockExplorers?.default.name} ↗
             </a>
             <Link to={appPath('/portfolio/overview')} onClick={() => setOpen(false)}>
               Portfolio
@@ -174,10 +177,7 @@ export function AppHeader() {
       </nav>
 
       <div className="app-header__right">
-        <span className="chain-chip">
-          <i aria-hidden="true" />
-          {arcTestnet.name}
-        </span>
+        <ChainSelect />
         {connected ? (
           <AccountMenu />
         ) : (

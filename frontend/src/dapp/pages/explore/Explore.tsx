@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { TOKENS, TRANSACTIONS, priceSeries, type Token, type TxType } from '../../data/demo';
 import { formatPrice, formatUsd, timeAgo } from '../../lib/format';
-import { arcTestnet } from '../../chains';
+import { useChain } from '../../state/chain';
 import { Change, DemoBadge, PageHeader, Segmented, Sparkline, SubNav, TokenMark, appPath } from '../../components/ui';
 
 const totals = {
@@ -11,6 +11,7 @@ const totals = {
 };
 
 export function ExploreLayout() {
+  const { config } = useChain();
   return (
     <div className="page">
       <PageHeader kicker="EXPLORE" title="Markets at a glance" actions={<DemoBadge />} />
@@ -29,7 +30,7 @@ export function ExploreLayout() {
         </div>
         <div className="stat">
           <span>Network</span>
-          <strong>{arcTestnet.name}</strong>
+          <strong>{config.chain.name}</strong>
         </div>
       </div>
       <SubNav

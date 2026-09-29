@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useId, useMemo, useR
 import { AnimatePresence, motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { APP_BASE } from '../../Root';
-import { TOKENS, tokenBySymbol, type Token } from '../data/demo';
+import { TOKENS, seeded, tokenBySymbol, type Token } from '../data/demo';
 import { formatPct, formatPrice } from '../lib/format';
 
 export const appPath = (path: string) => `${APP_BASE}${path.startsWith('/') ? path : `/${path}`}`;
@@ -335,4 +335,13 @@ export function useDemoSubmit() {
     [toast],
   );
   return { pending, submit };
+}
+
+/** Deterministic bell-shaped bars for the illustrative liquidity histogram. */
+export function seededBars(seed: number, count = 48) {
+  const rand = seeded(seed);
+  return Array.from({ length: count }, (_, i) => {
+    const x = (i - count / 2) / (count / 2);
+    return 0.25 + Math.exp(-x * x * 5) * 0.75 * (0.7 + rand() * 0.3);
+  });
 }

@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './auth/AuthProvider';
+import { ChainProvider } from './state/chain';
 import { AppHeader } from './components/AppHeader';
 import { ToastProvider, appPath } from './components/ui';
 import { Connect } from './pages/Connect';
@@ -49,6 +50,7 @@ function PageTransition() {
 export default function DappApp() {
   return (
     <AuthProvider>
+      <ChainProvider>
       <ToastProvider>
         <div className="dapp">
           <AppHeader />
@@ -89,6 +91,7 @@ export default function DappApp() {
           </main>
         </div>
       </ToastProvider>
+      </ChainProvider>
     </AuthProvider>
   );
 }

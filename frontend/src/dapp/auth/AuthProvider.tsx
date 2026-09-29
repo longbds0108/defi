@@ -2,10 +2,10 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { WagmiProvider as PrivyWagmiProvider, createConfig as createPrivyConfig } from '@privy-io/wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fallback, http } from 'viem';
+import { fallback, http, type Transport } from 'viem';
 import { WagmiProvider, createConfig, useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors';
-import { ARC_RPCS, arcTestnet } from '../chains';
+import { CHAINS, DEFAULT_CHAIN_ID, chainById } from '../chains';
 
 export type AuthMethod = 'google' | 'wallet';
 
@@ -33,9 +33,11 @@ export function useAuth() {
 }
 
 const PRIVY_APP_ID: string | undefined = import.meta.env.VITE_PRIVY_APP_ID || undefined;
-const transport = fallback(ARC_RPCS.map((url) => http(url)));
+// One fallback transport per supported chain (see chains.ts).
+const chains = CHAINS.map((c) => c.chain) as [(typeof CHAINS)[number]['chain'], ...(typeof CHAINS)[number]['chain'][]];
+const transports = Object.fromEntries(CHAINS.map((c) => [c.chain.id, fallback(c.rpcs.map((url) => http(url)))])) as Record<number, Transport>;
 const privyWagmiConfig = PRIVY_APP_ID
-  ? createPrivyConfig({ ssr: true, chains: [arcTestnet], transports: { [arcTestnet.id]: transport } })
+  ? createPrivyConfig({ ssr: true, chains, transports })
   : null;
 const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
@@ -52,8 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           loginMethods: ['google', 'wallet'],
           appearance: { theme: '#0E0B14', accentColor: '#9B5DE5', walletChainType: 'ethereum-only' },
           embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
-          defaultChain: arcTestnet,
-          supportedChains: [arcTestnet],
+          defaultChain: chainById(DEFAULT_CHAIN_ID).chain,
+          supportedChains: [...chains],
         }}
       >
         <QueryClientProvider client={queryClient}>
@@ -101,9 +103,9 @@ function PrivyAuthBridge({ children }: { children: ReactNode }) {
 // which avoids React's "setState while rendering another component" warning.
 const injectedConfig = createConfig({
   ssr: true,
-  chains: [arcTestnet],
+  chains,
   connectors: [injected()],
-  transports: { [arcTestnet.id]: transport },
+  transports,
 });
 
 function InjectedAuthBridge({ children }: { children: ReactNode }) {
@@ -121,7 +123,7 @@ function InjectedAuthBridge({ children }: { children: ReactNode }) {
       loginWithGoogle: () => undefined,
       connectWallet: () => {
         const connector = connectors[0];
-        if (connector) connect({ connector, chainId: arcTestnet.id });
+        if (connector) connect({ connector });
       },
       logout: async () => {
         await disconnectAsync();

@@ -13,7 +13,6 @@ export function PoolLayout() {
             Provide liquidity. <em>Launch markets.</em>
           </>
         }
-        actions={<DemoBadge />}
       />
       <div className="positions-strip" aria-label="Your positions">
         {DEMO_POSITIONS.map((position) => {
@@ -33,6 +32,7 @@ export function PoolLayout() {
             </div>
           );
         })}
+        <DemoBadge>Demo positions</DemoBadge>
         <div className="position-pill position-pill--muted">
           <span>
             <strong>{POOLS.length} pools</strong>
