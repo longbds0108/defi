@@ -86,3 +86,153 @@ canvas {
   outline-offset: 3px;
   border-radius: 6px;
 }
+
+/* ---------- Text scramble (shared) ---------- */
+
+.text-scramble {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.text-scramble__measure {
+  visibility: hidden;
+}
+
+.text-scramble__visual {
+  position: absolute;
+  /* A little slack on the right so glyph spans don't wrap before the
+     measured text does. */
+  inset: 0 -0.6em 0 0;
+  white-space: inherit;
+}
+
+.text-scramble.is-done .text-scramble__measure {
+  visibility: visible;
+}
+
+.text-scramble.is-done .text-scramble__visual {
+  display: none;
+}
+
+/* Hidden until the element scrolls into view, so the final text never flashes first. */
+.text-scramble.is-pending .text-scramble__visual {
+  visibility: hidden;
+}
+
+/* Unresolved glyphs sweep violet → blue across the string (--mix is set per
+   character); the glyph about to resolve glows. */
+.text-scramble__unresolved {
+  color: color-mix(in oklab, var(--color-accent), var(--color-blue) var(--mix, 0%));
+  -webkit-text-fill-color: currentColor;
+}
+
+.text-scramble__ahead {
+  opacity: 0;
+}
+
+.text-scramble__edge {
+  color: #f4ecff;
+  text-shadow: 0 0 14px rgba(181, 125, 238, 0.9), 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.paper .text-scramble__edge {
+  color: #6b3fc4;
+  text-shadow: 0 0 12px rgba(155, 93, 229, 0.45);
+}
+
+/* Single-line labels: keep the measured and animated text on one line. */
+.kicker .text-scramble,
+.surface__grid .text-scramble,
+.faq__q .text-scramble {
+  white-space: nowrap;
+}
+
+/* ---------- Route curtain (shared by landing and app) + toast ---------- */
+
+.route-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.route-curtain i {
+  background: var(--color-accent);
+  transform: scaleY(0);
+}
+
+.route-curtain > span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #100c14;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.route-curtain--active {
+  visibility: visible;
+}
+
+.route-curtain--active i {
+  animation: route-curtain-column 1.15s cubic-bezier(0.77, 0, 0.18, 1) both;
+  animation-delay: calc(var(--curtain-index) * 24ms);
+}
+
+.route-curtain--active > span {
+  animation: route-curtain-label 0.45s ease 0.4s both;
+}
+
+@keyframes route-curtain-column {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@keyframes route-curtain-label {
+  0% { opacity: 0; }
+  45%, 75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 14px 18px;
+  border: 1px solid rgba(155, 93, 229, 0.35);
+  border-radius: 14px;
+  background: rgba(22, 18, 31, 0.92);
+  backdrop-filter: blur(14px);
+  font-size: 0.88rem;
+  translate: -50% 0;
+}
+
+.toast i {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-warning);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .route-curtain--active i {
+    animation-duration: 0.4s;
+  }
+}
