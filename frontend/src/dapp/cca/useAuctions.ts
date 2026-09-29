@@ -68,11 +68,12 @@ export function saveAuction(chainId: number, address: Address) {
 
 async function discover(chainId: number): Promise<Address[]> {
   const client = clientFor(chainId);
+  const { chunk, chunks } = chainById(chainId).logRange ?? { chunk: CHUNK, chunks: CHUNKS };
   const latest = await client.getBlockNumber();
   const found: Address[] = [];
-  for (let i = 0; i < CHUNKS; i += 1) {
-    const toBlock = latest - BigInt(i) * (CHUNK + 1n);
-    const fromBlock = toBlock > CHUNK ? toBlock - CHUNK : 0n;
+  for (let i = 0; i < chunks; i += 1) {
+    const toBlock = latest - BigInt(i) * (chunk + 1n);
+    const fromBlock = toBlock > chunk ? toBlock - chunk : 0n;
     try {
       const logs = await client.getLogs({ address: LAUNCHPAD.ccaFactory, event: auctionCreatedEvent, fromBlock, toBlock });
       found.push(...logs.map((l) => l.args.auction!).reverse());
@@ -176,13 +177,14 @@ export function useMyBids(auction: AuctionView | null, owner?: Address) {
     enabled: Boolean(auction && owner),
     queryFn: async () => {
       const client = clientFor(auction!.chainId);
+      const step = chainById(auction!.chainId).logRange?.chunk ?? CHUNK;
       const from = auction!.startBlock > 10n ? auction!.startBlock - 10n : 0n;
       const latest = await client.getBlockNumber();
       const logs = [];
       // Scan from the auction start, capped so very long auctions stay cheap.
       let chunks = 0;
-      for (let start = from; start <= latest && chunks < 12; start += CHUNK + 1n, chunks += 1) {
-        const end = start + CHUNK > latest ? latest : start + CHUNK;
+      for (let start = from; start <= latest && chunks < 12; start += step + 1n, chunks += 1) {
+        const end = start + step > latest ? latest : start + step;
         logs.push(...(await client.getLogs({ address: auction!.address, event: bidSubmittedEvent, args: { owner }, fromBlock: start, toBlock: end })));
         if (logs.length > 50) break;
       }

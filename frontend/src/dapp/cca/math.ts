@@ -30,15 +30,18 @@ export function snapToTick(q96: bigint, floor: bigint, spacing: bigint, above: b
 
 /**
  * Uniform release schedule over `blocks` blocks. Each step packs
- * (mps: uint24 | blockDelta: uint40) into 8 bytes; steps must sum to 1e7 mps.
+ * (mps: uint24 | blockDelta: uint40) into 8 bytes and the steps must sum to
+ * exactly 1e7 mps. The remainder is spread one mps per block over the first
+ * blocks instead of being dumped into the last block, which matters on fast
+ * chains where an auction spans hundreds of thousands of blocks.
  */
 export function uniformSteps(blocks: number): Hex {
+  if (blocks < 1 || blocks > MPS_TOTAL) throw new Error('Auction length must be between 1 and 10,000,000 blocks.');
   const pack = (mps: number, delta: number) => toHex(BigInt(mps) | (BigInt(delta) << 24n), { size: 8 });
   const per = Math.floor(MPS_TOTAL / blocks);
-  const remainder = MPS_TOTAL - per * blocks;
+  const remainder = MPS_TOTAL - per * blocks; // < blocks
   if (remainder === 0) return pack(per, blocks);
-  if (blocks === 1) return pack(MPS_TOTAL, 1);
-  return concat([pack(per, blocks - 1), pack(per + remainder, 1)]);
+  return concat([pack(per + 1, remainder), pack(per, blocks - remainder)]);
 }
 
 export interface AuctionConfig {

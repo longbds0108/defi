@@ -17,6 +17,8 @@ export function formatPrice(value: number) {
 
 export function formatAmount(value: number, max = 6) {
   if (!Number.isFinite(value) || value === 0) return '0';
+  // Tiny values (e.g. auction prices) keep 3 significant digits instead of rounding to 0.
+  if (Math.abs(value) < 10 ** -max) return value.toPrecision(3);
   const digits = value >= 1000 ? 2 : value >= 1 ? 4 : max;
   return value.toLocaleString('en-US', { maximumFractionDigits: digits });
 }

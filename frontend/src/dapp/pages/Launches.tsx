@@ -43,7 +43,7 @@ function AuctionCard({ a, onOpen }: { a: AuctionView; onOpen: () => void }) {
   return (
     <motion.article className={`launch-card launch-card--${a.status}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ '--launch-color': color } as React.CSSProperties}>
       <div className="launch-card__top">
-        <TokenMark symbol={a.tokenSymbol} size={44} color={color} />
+        <TokenMark symbol={a.tokenSymbol} size={44} color={color} plain />
         <span className={`status status--${a.status}`}>
           <i aria-hidden="true" />
           {a.status === 'live' ? 'Live' : a.status === 'upcoming' ? 'Upcoming' : 'Ended'}

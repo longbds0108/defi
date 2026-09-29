@@ -1,5 +1,5 @@
 import { defineChain, type Address, type Chain } from 'viem';
-import { baseSepolia, sepolia, unichainSepolia } from 'viem/chains';
+import { baseSepolia, robinhoodTestnet, sepolia, unichainSepolia } from 'viem/chains';
 
 export const NATIVE: Address = '0x0000000000000000000000000000000000000000';
 
@@ -28,12 +28,16 @@ export interface ChainConfig {
   key: string;
   short: string;
   color: string;
+  /** Network logo from the Uniswap interface repo, served from /public/chains. */
+  logo: string;
   /** Public RPCs, first ones tolerate wide eth_getLogs ranges. */
   rpcs: string[];
   blockTimeSec: number;
   /** Uniswap Trading/LP API support (see developers.uniswap.org supported chains). */
   uniswapApi: boolean;
   tokens: TokenInfo[];
+  /** eth_getLogs window for auction discovery; defaults to 5 × 10k blocks. */
+  logRange?: { chunk: bigint; chunks: number };
   /** Launchpad token factory, when one is deployed on this chain. */
   tokenFactory?: { address: Address; kind: 'uerc20' | 'usuperc20' };
 }
@@ -50,6 +54,7 @@ export const CHAINS: ChainConfig[] = [
     key: 'sepolia',
     short: 'SEP',
     color: '#627EEA',
+    logo: '/chains/ethereum-logo.png',
     rpcs: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://sepolia.drpc.org'],
     blockTimeSec: 12,
     uniswapApi: true,
@@ -68,6 +73,7 @@ export const CHAINS: ChainConfig[] = [
     key: 'base-sepolia',
     short: 'BASE',
     color: '#0052FF',
+    logo: '/chains/base-logo.png',
     rpcs: ['https://base-sepolia-rpc.publicnode.com', 'https://sepolia.base.org'],
     blockTimeSec: 2,
     uniswapApi: true,
@@ -84,6 +90,7 @@ export const CHAINS: ChainConfig[] = [
     key: 'unichain-sepolia',
     short: 'UNI',
     color: '#F50DB4',
+    logo: '/chains/unichain-sepolia-logo.png',
     rpcs: ['https://unichain-sepolia-rpc.publicnode.com', 'https://sepolia.unichain.org'],
     blockTimeSec: 1,
     uniswapApi: true,
@@ -98,6 +105,7 @@ export const CHAINS: ChainConfig[] = [
     key: 'arc-testnet',
     short: 'ARC',
     color: '#9B5DE5',
+    logo: '/chains/arc-logo.png',
     rpcs: ['https://rpc.testnet.arc.network', 'https://rpc.blockdaemon.testnet.arc.network', 'https://rpc.quicknode.testnet.arc.network'],
     blockTimeSec: 1,
     // Arc Testnet is not served by the Uniswap API (mainnet Arc is).
@@ -107,6 +115,26 @@ export const CHAINS: ChainConfig[] = [
       { ...USDC, address: '0x3600000000000000000000000000000000000000' },
       { ...EURC, address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a' },
     ],
+    tokenFactory: { address: '0x000000e200088D55C39a11F609E5F667729ad49b', kind: 'uerc20' },
+  },
+  {
+    chain: robinhoodTestnet,
+    key: 'robinhood-testnet',
+    short: 'HOOD',
+    color: '#CCFF00',
+    logo: '/chains/robinhood-logo.png',
+    rpcs: ['https://rpc.testnet.chain.robinhood.com'],
+    // Arbitrum Orbit L2 (~0.14 s blocks). CCA reads L2 block numbers via ArbSys.
+    blockTimeSec: 0.14,
+    // The Uniswap API serves Robinhood Chain mainnet (4663), not this testnet.
+    uniswapApi: false,
+    // Circle has not published USDC for this testnet, so only ETH/WETH are listed.
+    tokens: [
+      { ...ETH, address: NATIVE },
+      { ...WETH, address: '0x33e4191705c386532ba27cBF171Db86919200B94' },
+    ],
+    // The public RPC accepts wide log ranges; ~10M blocks ≈ 16 days.
+    logRange: { chunk: 1_999_999n, chunks: 5 },
     tokenFactory: { address: '0x000000e200088D55C39a11F609E5F667729ad49b', kind: 'uerc20' },
   },
 ];

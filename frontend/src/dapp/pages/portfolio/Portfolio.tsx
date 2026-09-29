@@ -50,7 +50,7 @@ export function PortfolioLayout() {
       />
       {!address ? (
         <div className="empty-state">
-          <p>Connect a wallet to see balances across Sepolia, Base Sepolia, Unichain Sepolia and Arc Testnet.</p>
+          <p>Connect a wallet to see balances across {CHAINS.map((c) => c.chain.name).join(', ')}.</p>
           <Link className="cta cta--sm" to={appPath('/connect')}>
             Connect
           </Link>

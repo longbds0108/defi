@@ -7,6 +7,21 @@ import type { FlowStep } from '../hooks/useFlow';
 import { Modal, TokenMark } from './ui';
 
 export function ChainDot({ config, size = 22 }: { config: ChainConfig; size?: number }) {
+  const [broken, setBroken] = useState(false);
+  if (!broken) {
+    return (
+      <img
+        className="network-dot network-dot--logo"
+        src={config.logo}
+        alt=""
+        width={size}
+        height={size}
+        style={{ width: size, height: size, borderRadius: Math.round(size * 0.28) }}
+        onError={() => setBroken(true)}
+        aria-hidden="true"
+      />
+    );
+  }
   return (
     <span className="network-dot" style={{ background: config.color, width: size, height: size, fontSize: size * 0.4 }} aria-hidden="true">
       {config.short.slice(0, 1)}

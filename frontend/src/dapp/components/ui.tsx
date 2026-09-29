@@ -9,7 +9,40 @@ export const appPath = (path: string) => `${APP_BASE}${path.startsWith('/') ? pa
 
 /* ---------- Token + network marks ---------- */
 
-export function TokenMark({ symbol, size = 28, color }: { symbol: string; size?: number; color?: string }) {
+// Official logos from the Uniswap default token list (tokens.uniswap.org),
+// stored in /public/tokens so the app does not depend on third-party hosts.
+const TOKEN_LOGOS: Record<string, string> = {
+  ETH: '/tokens/eth.png',
+  WETH: '/tokens/weth.png',
+  USDC: '/tokens/usdc.png',
+  EURC: '/tokens/eurc.png',
+  UNI: '/tokens/uni.png',
+  LINK: '/tokens/link.png',
+  WBTC: '/tokens/wbtc.png',
+  AAVE: '/tokens/aave.png',
+  ARB: '/tokens/arb.png',
+};
+
+export const tokenLogo = (symbol: string) => TOKEN_LOGOS[symbol.toUpperCase()];
+
+/** `plain` skips official logos, e.g. for user-created tokens that may reuse a known symbol. */
+export function TokenMark({ symbol, size = 28, color, plain = false }: { symbol: string; size?: number; color?: string; plain?: boolean }) {
+  const [broken, setBroken] = useState(false);
+  const logo = plain ? undefined : tokenLogo(symbol);
+  if (logo && !broken) {
+    return (
+      <img
+        className="token-mark token-mark--logo"
+        src={logo}
+        alt=""
+        width={size}
+        height={size}
+        loading="lazy"
+        onError={() => setBroken(true)}
+        aria-hidden="true"
+      />
+    );
+  }
   const tone = color ?? tokenBySymbol(symbol).color;
   return (
     <span

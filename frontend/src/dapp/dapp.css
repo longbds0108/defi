@@ -674,6 +674,12 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
+.token-mark--logo {
+  object-fit: contain;
+  background: transparent;
+  box-shadow: none;
+}
+
 .pair-mark {
   display: inline-flex;
 }
@@ -2484,4 +2490,11 @@ button.chain-chip .network-dot {
   .launch-card--skeleton {
     animation: none;
   }
+}
+
+.network-dot--logo {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: cover;
+  background: transparent;
 }
